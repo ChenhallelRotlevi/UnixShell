@@ -185,6 +185,16 @@ default:
     jg parent
 child:
     movq $0, %rbx
+
+    movq argv(%rip), %rcx
+    movb (%rcx), %al
+
+    cmpb $'/', %al
+    je dir_call
+    cmpb $'.', %al
+    je dir_call
+
+    movq $0, %rbx
 find_right_path_loop:
     movq PATH_token(,%rbx, 8), %rcx
     movq $0, %rdx
@@ -207,7 +217,7 @@ copy_dir_done:
 copy_cmd_loop:
     movb (%rcx), %al                     
     cmpb $0, %al                        
-    je   copy_cmd_done
+    je copy_cmd_done
     
     movb %al, buffer_fullpath(,%rdx,1)   
     incq %rcx
@@ -235,6 +245,14 @@ right_path:
     movq $59, %rax
     movq $0, %rbx
     movq $buffer_fullpath, %rdi
+    movq $argv, %rsi
+    movq $0, %rdx
+    syscall
+    jmp ErrorExec
+dir_call:
+    movq $59, %rax
+    movq $0, %rbx
+    movq argv(,%rbx ,8), %rdi
     movq $argv, %rsi
     movq $0, %rdx
     syscall
