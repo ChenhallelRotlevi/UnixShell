@@ -266,14 +266,14 @@ do_cd:
 
 cdNoArgs:
     movq $1, %rax  
-	movq $1, %rdi
+	movq $2, %rdi
 	movq $cdNoArgs_str, %rsi
   	movq $23, %rdx
 	syscall 
     jmp end_command
 cdPathNotFound:
     movq $1, %rax  
-	movq $1, %rdi
+	movq $2, %rdi
 	movq $cdPathNotFound_str, %rsi
   	movq $25, %rdx
 	syscall 
@@ -281,7 +281,7 @@ cdPathNotFound:
 
 ErrorExec:
     movq $1, %rax  
-	movq $1, %rdi
+	movq $2, %rdi
 	movq $ErrorExec_str, %rsi
   	movq $32, %rdx
 	syscall 
