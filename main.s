@@ -188,7 +188,7 @@ child:
 
     movq argv(%rip), %rcx
     movb (%rcx), %al
-
+ 
     cmpb $'/', %al
     je dir_call
     cmpb $'.', %al
@@ -237,8 +237,10 @@ copy_cmd_done:
     rep stosq 
 
     incq %rbx
-    cmpq $0, %rbx 
-    jle ErrorExec 
+    movq PATH_token(,%rbx, 8), %rcx  
+    cmpq $0, %rcx
+    jle ErrorExec
+
     jmp find_right_path_loop
 
 right_path:
@@ -250,6 +252,14 @@ right_path:
     syscall
     jmp ErrorExec
 dir_call:
+    movq $21, %rax
+    movq $0, %rbx
+    movq argv(,%rbx ,8), %rdi
+    movq $1, %rsi
+    syscall
+    cmpq $0, %rax
+    jl ErrorExec
+
     movq $59, %rax
     movq $0, %rbx
     movq argv(,%rbx ,8), %rdi
